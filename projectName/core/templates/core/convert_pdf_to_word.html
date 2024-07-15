@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF to Word Conversion</title>
+    <style>
+        /* Add some basic styles for the drag-and-drop area */
+        #drop-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="drop-area">
+        <p>Drag and drop a PDF file here or click to select</p>
+        <input type="file" id="file-input" accept=".pdf" multiple>
+    </div>
+
+    <script>
+        const dropArea = document.getElementById('drop-area');
+
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropArea.classList.add('highlight');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('highlight');
+        });
+
+        dropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropArea.classList.remove('highlight');
+
+            const files = event.dataTransfer.files;
+            handleFiles(files);
+        });
+
+        document.getElementById('file-input').addEventListener('change', (event) => {
+            const files = event.target.files;
+            handleFiles(files);
+        });
+// Updated handleFiles() function in your HTML/JavaScript frontend
+
+function handleFiles(files) {
+    for (const file of files) {
+        if (file.type === 'application/pdf') {
+            const formData = new FormData();
+            formData.append('pdf_file', file);
+
+            // Replace '/convert_pdf_to_word/' with your actual backend endpoint URL
+            fetch('/convert_pdf_to_word/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response from server:', data);
+                // Handle success or display message to the user
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle error or display error message to the user
+            });
+
+        } else {
+            alert('Please select a PDF file.');
+        }
+    }
+}
+
+    </script>
+</body>
+</html>
